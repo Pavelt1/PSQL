@@ -1,14 +1,13 @@
 -- Задание 2 Селект запросы
 
 SELECT name,times FROM tracks
-ORDER BY times DESC
-LIMIT 1;
+WHERE times = (SELECT MAX(times)FROM tracks);
 
 SELECT name,times FROM tracks
 WHERE times >= '00:03:50';
 
 SELECT name,years FROM collection 
-WHERE years >= 2018 AND years <= 2020;
+WHERE years BETWEEN 2018 AND 2020;
 
 SELECT name FROM performers
 WHERE name NOT LIKE '% %' ;
@@ -31,17 +30,16 @@ LEFT JOIN tracks a ON albums.id = a.album_id
 GROUP BY albums.name;
 
 
-SELECT performers.name,years FROM performers 
-JOIN albums_perfomers a ON performers.id=a.performer_id
-JOIN albums b ON a.album_id=b.id 
-WHERE years < 2020;
+SELECT performers.name FROM performers 
+where performers.id not in 
+  (select performer_id from albums_perfomers 
+   join albums b on albums_perfomers.album_id=b.id 
+   where b.years=2020);
 
-SELECT collection.name FROM collection 
+SELECT DISTINCT collection.name FROM collection 
 JOIN track_collection a ON collection.id=a.collection_id
 JOIN tracks b ON a.track_id=b.id 
 JOIN albums c ON b.album_id=c.id
 JOIN albums_perfomers d ON c.id=d.album_id
 JOIN performers q ON d.performer_id=q.id 
-WHERE q.name = 'Eminem' 
-GROUP BY collection.name
-;
+WHERE q.name = 'Eminem' ;
